@@ -1,0 +1,27 @@
+{
+  "name": "chatsdk_ui",
+  "version": "1.0.0",
+  "description": "Chat SDK UI for Logos - Private messaging interface",
+  "author": "Logos Core Team",
+  "type": "ui",
+  "main": "chatsdk_ui",
+  "dependencies": ["chatsdk_module"],
+  "category": "chat",
+  "build": {
+    "type": "cmake",
+    "files": [
+      "src/ChatSDKWindow.cpp",
+      "src/ChatSDKWindow.h",
+      "src/ConversationListPanel.cpp",
+      "src/ConversationListPanel.h",
+      "src/ChatPanel.cpp",
+      "src/ChatPanel.h",
+      "src/MessageBubble.cpp",
+      "src/MessageBubble.h"
+    ]
+  },
+  "capabilities": [
+    "ui_components",
+    "private_messaging"
+  ]
+}
