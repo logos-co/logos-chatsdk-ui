@@ -5,6 +5,9 @@
 #include <QDebug>
 #include <iostream>
 #include <memory>
+#include <cstdlib>
+#include <csignal>
+#include <unistd.h>
 
 // Replace CoreManager with direct C API functions
 extern "C" {
@@ -26,10 +29,49 @@ QStringList convertPluginsToStringList(char** plugins) {
     return result;
 }
 
+static QString g_instanceTmpDir;
+
+static void cleanup() {
+    static bool cleaned = false;
+    if (cleaned) return;
+    cleaned = true;
+
+    logos_core_cleanup();
+
+    // logos_core_cleanup() may not kill all child processes (e.g. capability_module).
+    // Send SIGTERM to our process group to clean up any stragglers.
+    std::signal(SIGTERM, SIG_IGN);
+    kill(0, SIGTERM);
+    std::signal(SIGTERM, SIG_DFL);
+
+    if (!g_instanceTmpDir.isEmpty()) {
+        QDir(g_instanceTmpDir).removeRecursively();
+    }
+}
+
+static void signalHandler(int) {
+    cleanup();
+    std::_Exit(0);
+}
+
 int main(int argc, char *argv[])
 {
     // Create QApplication first
     QApplication app(argc, argv);
+
+    // Ensure cleanup on Ctrl+C / kill
+    std::signal(SIGINT, signalHandler);
+    std::signal(SIGTERM, signalHandler);
+
+    // Give this instance its own temp directory so Qt Remote Objects
+    // sockets (local:logos_*) don't collide with other instances.
+    QString baseTmp = QDir::tempPath();
+    g_instanceTmpDir = QString("%1/logos-instance-%2")
+        .arg(baseTmp)
+        .arg(QCoreApplication::applicationPid());
+    QDir().mkpath(g_instanceTmpDir);
+    qputenv("TMPDIR", g_instanceTmpDir.toUtf8());
+    std::cout << "Instance temp dir: " << g_instanceTmpDir.toStdString() << std::endl;
 
     // Set the plugins directory
     QString pluginsDir = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../modules");
@@ -78,8 +120,7 @@ int main(int argc, char *argv[])
     // Run the application
     int result = app.exec();
     
-    // Cleanup core before exit
-    logos_core_cleanup();
-    
+    cleanup();
+
     return result;
 }

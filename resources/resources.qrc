@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="images/chat_bg.png">chat_bg.png</file>
+    </qresource>
+</RCC>
