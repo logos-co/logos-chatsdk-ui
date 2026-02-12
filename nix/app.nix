@@ -204,10 +204,10 @@ pkgs.stdenv.mkDerivation rec {
       echo "Installed capability_module to modules directory"
       
       # Fix RPATH on macOS
-      if [ "$OS_EXT" = "dylib" ]; then
-        ${pkgs.darwin.cctools}/bin/install_name_tool -add_rpath "@loader_path" "$out/modules/capability_module.dylib" 2>/dev/null || true
-        echo "Fixed RPATH for capability_module"
-      fi
+      ${if pkgs.stdenv.isDarwin then ''
+      ${pkgs.darwin.cctools}/bin/install_name_tool -add_rpath "@loader_path" "$out/modules/capability_module.dylib" 2>/dev/null || true
+      echo "Fixed RPATH for capability_module"
+      '' else ""}
     else
       echo "Warning: capability_module_plugin not found at ${logosCapabilityModule}/lib/"
       ls -la "${logosCapabilityModule}/lib/" || true
@@ -224,11 +224,11 @@ pkgs.stdenv.mkDerivation rec {
       echo "Installed chatsdk_module to modules directory"
       
       # Fix RPATH on macOS so the module can find libchat in the same directory
-      if [ "$OS_EXT" = "dylib" ]; then
-        ${pkgs.darwin.cctools}/bin/install_name_tool -add_rpath "@loader_path" "$out/modules/chatsdk_module.dylib" 2>/dev/null || true
-        ${pkgs.darwin.cctools}/bin/install_name_tool -add_rpath "@loader_path/../lib" "$out/modules/chatsdk_module.dylib" 2>/dev/null || true
-        echo "Fixed RPATH for chatsdk_module"
-      fi
+      ${if pkgs.stdenv.isDarwin then ''
+      ${pkgs.darwin.cctools}/bin/install_name_tool -add_rpath "@loader_path" "$out/modules/chatsdk_module.dylib" 2>/dev/null || true
+      ${pkgs.darwin.cctools}/bin/install_name_tool -add_rpath "@loader_path/../lib" "$out/modules/chatsdk_module.dylib" 2>/dev/null || true
+      echo "Fixed RPATH for chatsdk_module"
+      '' else ""}
     else
       echo "Warning: chatsdk_module_plugin not found at ${logosSDKModuleLib}/lib/"
       ls -la "${logosSDKModuleLib}/lib/" || true
