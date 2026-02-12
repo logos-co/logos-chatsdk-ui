@@ -35,11 +35,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1769617130,
-        "narHash": "sha256-X7cyX57w3QcAqiK7bsGAbxJ3fB5rRsejHrJd+DvMuPc=",
+        "lastModified": 1770913574,
+        "narHash": "sha256-Mgt/S1XDkqWPg++jQBjZ55RL1QpoKPQDEY/yRdJTlFg=",
         "owner": "logos-co",
         "repo": "logos-chatsdk-module",
-        "rev": "3d3514a602a3715885117fc330128d08c8978386",
+        "rev": "ac55630cd81a078b16a14bcec20b1b18970f2815",
         "type": "github"
       },
       "original": {
