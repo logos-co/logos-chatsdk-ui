@@ -3,30 +3,6 @@
 #include <QStackedWidget>
 #include <QScrollBar>
 #include <QTimer>
-#include <QPainter>
-#include <QImage>
-
-// Custom widget that paints a background image at low opacity
-class BackgroundWidget : public QWidget {
-public:
-    BackgroundWidget(QWidget* parent = nullptr) : QWidget(parent) {
-        m_bgImage.load(":/images/chat_bg.png");
-    }
-protected:
-    void paintEvent(QPaintEvent*) override {
-        QPainter painter(this);
-        painter.fillRect(rect(), QColor("#0A0A0A"));
-        if (!m_bgImage.isNull()) {
-            painter.setOpacity(0.07);
-            QSize scaled = m_bgImage.size().scaled(size(), Qt::KeepAspectRatioByExpanding);
-            int x = (width() - scaled.width()) / 2;
-            int y = (height() - scaled.height()) / 2;
-            painter.drawImage(QRect(x, y, scaled.width(), scaled.height()), m_bgImage);
-        }
-    }
-private:
-    QImage m_bgImage;
-};
 
 ChatPanel::ChatPanel(QWidget* parent)
     : QWidget(parent)
@@ -119,7 +95,8 @@ void ChatPanel::setupChatState()
         "}"
     );
 
-    m_messagesContainer = new BackgroundWidget(m_scrollArea);
+    m_messagesContainer = new QWidget(m_scrollArea);
+    m_messagesContainer->setStyleSheet("background-color: #0A0A0A;");
     m_messagesLayout = new QVBoxLayout(m_messagesContainer);
     m_messagesLayout->setContentsMargins(16, 16, 16, 16);
     m_messagesLayout->setSpacing(5);
