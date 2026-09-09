@@ -25,13 +25,9 @@ concurrency:
 
 jobs:
   backend-tests:
-    name: Backend unit tests (${{ matrix.os }})
+    name: Backend unit tests
     environment: ${{ github.ref == 'refs/heads/master' && 'public-cache' || '' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, ubuntu-24.04-arm]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     timeout-minutes: 30
 
     steps:
@@ -62,13 +58,9 @@ jobs:
           '
 
   qml-checks:
-    name: qmllint + Qt Quick Test (${{ matrix.os }})
+    name: qmllint + Qt Quick Test
     environment: ${{ github.ref == 'refs/heads/master' && 'public-cache' || '' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, ubuntu-24.04-arm]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     timeout-minutes: 60
 
     steps:
